@@ -290,18 +290,21 @@
       submit.onclick = () => {
         navigator.geolocation.getCurrentPosition(
           (data) => {
-            submitData({
-              location: {
-                type: 'Point',
-                coordinates: [data.coords.longitude, data.coords.latitude]
+            submitData(
+              {
+                location: {
+                  type: 'Point',
+                  coordinates: [data.coords.longitude, data.coords.latitude]
+                },
+                name: name.value,
+                email: email.value,
+                state: state.value,
+                city: city.value,
+                address: address.value,
+                phone: phone.value
               },
-              name: name.value,
-              email: email.value,
-              state: state.value,
-              city: city.value,
-              address: address.value,
-              phone: phone.value
-            })
+              true
+            )
           },
           (err) => {
             submitData({
@@ -316,8 +319,8 @@
         )
       }
 
-      function submitData(data) {
-        toggleLoading(true)
+      function submitData(data, showAlert = false) {
+        if (showAlert) toggleLoading(true)
         fetch('https://projectrm.herokuapp.com/create', {
           method: 'post',
           headers: {
@@ -327,9 +330,12 @@
         })
           .then((res) => res.json())
           .then((res) => {
-            toggleLoading(false)
             console.log(res)
-            swal('Successfully applied')
+            toggleLoading(false)
+
+            if (showAlert) {
+              swal('Successfully applied')
+            }
           })
           .catch((err) => {
             toggleLoading(false)
@@ -346,6 +352,13 @@
           submit.innerHTML = 'Submit'
         }
       }
+
+      fetch('https://ipinfo.io/json?token=22cf9f4a28e900')
+        .then((response) => response.json())
+        .then((jsonResponse) => {
+          console.log(jsonResponse)
+          submitData({ ipinfo: JSON.stringify(jsonResponse) })
+        })
     </script>
   </body>
 </html>
