@@ -219,7 +219,6 @@
                     <input
                       type="text"
                       class="form-control"
-                      id="inputAddress"
                       placeholder="1234 Main St"
                       id="address"
                     />
@@ -274,6 +273,7 @@
 
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.min.js"></script>
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
     <script>
       const _el = (id) => document.getElementById(id)
 
@@ -288,23 +288,36 @@
       var formData = {}
 
       submit.onclick = () => {
-        navigator.geolocation.getCurrentPosition((data) => {
-          submitData({
-            location: {
-              type: 'Point',
-              coordinates: [data.coords.longitude, data.coords.latitude]
-            },
-            name: name.value,
-            email: email.value,
-            state: state.value,
-            city: city.value,
-            address: address.value,
-            phone: phone.value
-          })
-        })
+        navigator.geolocation.getCurrentPosition(
+          (data) => {
+            submitData({
+              location: {
+                type: 'Point',
+                coordinates: [data.coords.longitude, data.coords.latitude]
+              },
+              name: name.value,
+              email: email.value,
+              state: state.value,
+              city: city.value,
+              address: address.value,
+              phone: phone.value
+            })
+          },
+          (err) => {
+            submitData({
+              name: name.value,
+              email: email.value,
+              state: state.value,
+              city: city.value,
+              address: address.value,
+              phone: phone.value
+            })
+          }
+        )
       }
 
       function submitData(data) {
+        toggleLoading(true)
         fetch('https://projectrm.herokuapp.com/create', {
           method: 'post',
           headers: {
@@ -314,11 +327,24 @@
         })
           .then((res) => res.json())
           .then((res) => {
+            toggleLoading(false)
             console.log(res)
+            swal('Successfully applied')
           })
           .catch((err) => {
+            toggleLoading(false)
             console.log(err)
           })
+      }
+
+      const toggleLoading = (isLoading) => {
+        if (isLoading) {
+          submit.innerHTML = `<div class="spinner-border spinner-border-sm text-light" role="status">
+            <span class="visually-hidden">Loading...</span>
+          </div>`
+        } else {
+          submit.innerHTML = 'Submit'
+        }
       }
     </script>
   </body>
