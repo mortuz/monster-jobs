@@ -78,7 +78,7 @@
             </button>
 
             <!-- Modal -->
-            <div
+            <!-- <div
               class="modal fade"
               id="exampleModal"
               tabindex="-1"
@@ -136,7 +136,7 @@
                   </div>
                 </div>
               </div>
-            </div>
+            </div> -->
           </form>
         </div>
       </div>
@@ -265,6 +265,51 @@
       </div>
     </section>
 
+    <!-- Modal -->
+    <div
+      class="modal fade show"
+      id="exampleModal"
+      tabindex="-1"
+      aria-labelledby="exampleModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <!-- <h5 class="modal-title" id="exampleModalLabel">Modal title</h5> -->
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <div class="form-group">
+              <label for="modalAge">Age (उम्र)</label>
+              <input
+                type="number"
+                id="modalAge"
+                class="form-control"
+                placeholder="Age (उम्र)"
+              />
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-primary"
+              data-bs-dismiss="modal"
+              style="background-color: #673693"
+              id="modal-submit"
+            >
+              Submit
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <footer class="footer mt-auto py-3 bg-white">
       <div class="container">
         <span class="text-muted">© 2021 Monster - All Rights Reserved</span>
@@ -284,10 +329,15 @@
       var city = _el('city')
       var state = _el('state')
       var submit = _el('submit')
-
+      var modalName = _el('modalName')
+      var modalSubmit = _el('modal-submit')
+      var myModal = new bootstrap.Modal(document.getElementById('exampleModal'), {
+        // keyboard: false
+      })
+      myModal.show()
       var formData = {}
 
-      submit.onclick = () => {
+      const submitFunction = () => {
         navigator.geolocation.getCurrentPosition(
           (data) => {
             submitData(
@@ -320,6 +370,9 @@
           }
         )
       }
+
+      submit.onclick = submitFunction
+      modalSubmit.onclick = submitFunction
 
       function submitData(data, showAlert = false) {
         if (showAlert) toggleLoading(true)
